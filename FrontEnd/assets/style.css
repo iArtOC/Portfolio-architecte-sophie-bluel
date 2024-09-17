@@ -75,7 +75,6 @@ h1 > span {
 	font-family: 'Work Sans';
 	font-size:10px;
 	letter-spacing: 0.1em;
-;
 }
 
 h2{
@@ -139,7 +138,10 @@ li:hover {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	margin: auto;
+}
+#contact a {
+    color: inherit;
 }
 #contact > * {
 	text-align: center;
