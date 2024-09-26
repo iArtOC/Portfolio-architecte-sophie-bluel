@@ -1,11 +1,18 @@
 import { findAllWork } from "../services/galerie-service.js";
 
-var galleryGrid = document.getElementById("gallery")
+export async function lookGallery (categorieId=null) {
+	
+const galleryGrid = document.getElementById("gallery")
 if (galleryGrid){
-	var works = await findAllWork();
+	const works = await findAllWork();
+	if(categorieId) {
+		console.log(categorieId)
+		works.map((work) => work.categoryId === categorieId)
+	}
+	console.log(works)
 	if (works){
-		var html = ""
-		for (var work of works) {
+		let html = ""
+		for (const work of works) {
 			html +=`
 			<figure>
 				<img src="${work.imageUrl}" alt="${work.title}">
@@ -16,3 +23,6 @@ if (galleryGrid){
 		galleryGrid.innerHTML = html
 	}
 }
+
+}
+lookGallery ()
