@@ -1,28 +1,33 @@
 import { findAllWork } from "../services/galerie-service.js";
 
-export async function lookGallery (categorieId=null) {
-	
-const galleryGrid = document.getElementById("gallery")
-if (galleryGrid){
-	const works = await findAllWork();
-	if(categorieId) {
-		console.log(categorieId)
-		works.map((work) => work.categoryId === categorieId)
-	}
-	console.log(works)
-	if (works){
-		let html = ""
-		for (const work of works) {
-			html +=`
-			<figure>
-				<img src="${work.imageUrl}" alt="${work.title}">
-				<figcaption>${work.title}</figcaption>
-			</figure>
-			`
-		}
-		galleryGrid.innerHTML = html
-	}
+export async function lookGallery(categorieId = null) {
+    const galleryGrid = document.getElementById("gallery");
+    if (galleryGrid) {
+        let works;
+        try {
+            works = await findAllWork();
+        } catch (error) {
+            console.error("Erreur lors de la récupération des travaux :", error);
+            return;
+        }
+        if (categorieId) {
+            works = works.filter(work => work.categoryId === categorieId);
+        }
+        let html = "";
+        if (works) {
+            for (const work of works) {
+                html += `
+                <figure>
+                    <img src="${work.imageUrl}" alt="${work.title}">
+                    <figcaption>${work.title}</figcaption>
+                </figure>
+                `;
+            }    
+        } 
+        galleryGrid.innerHTML = html;
+    }
 }
 
-}
-lookGallery ()
+document.addEventListener("DOMContentLoaded", function () {
+    lookGallery();
+});
