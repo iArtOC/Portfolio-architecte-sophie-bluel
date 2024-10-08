@@ -1,37 +1,3 @@
-// export async function connectLogin (){
-//     return new Promise((resolve,reject)=>{
-//         fetch("http://localhost:5678/api/users/login")
-//         .then(response => response.json())
-//         .then(response => resolve(response))
-//         .catch(error => reject(error))  
-//     })
-// }
-
-// import { connectLogin } ;
-
-// let inputEmail = document.getElementById("email")
-// let email = inputEmail.value
-// console.log(email); // affiche ce qui est contenu dans la balise name
-
-// let inputPassword = document.getElementById("nom")
-// let password = inputPassword.value
-// console.log(password); // affiche ce qui est contenu dans la balise name
-
-// const form = document.querySelector('form');
-
-// // Quand on submit
-// form.addEventListener("submit", (event) => {
-//     // On empêche le comportement par défaut
-//     event.preventDefault();
-//     console.log("Il n’y a pas eu de rechargement de page");
-
-//     // On récupère les deux champs et on affiche leur valeur
-//     email.value;
-//     password.value;
-//     console.log(email);
-//     console.log(password);
-// });
-
 export async function connectLogin(email, password) {
     return new Promise(function (resolve, reject) {
         fetch("http://localhost:5678/api/users/login", {
@@ -46,9 +12,6 @@ export async function connectLogin(email, password) {
         .catch(error => reject(error));
     });
 }
-
-// Assurez-vous que l'importation est correcte
-// import { connectLogin } from './path/to/your/module';
 
 const form = document.querySelector('form');
 
@@ -72,8 +35,9 @@ form.addEventListener("submit", async function (event) {
     try {
         const response = await connectLogin(email, password); // Passez les valeurs au login
         console.log(response); // Gérer la réponse ici
-        if (response.ok){
-            console.log("connecte")
+        if (response.token) { // Supposons que la réponse contient un champ 'token'
+            localStorage.setItem('token', response.token); // Stocke le token
+            window.location.href = "./index.html";
         } else {
             //alert("une erreur est survenu")
         }
@@ -82,11 +46,3 @@ form.addEventListener("submit", async function (event) {
         alert("une erreur est survenu")
     }
 });
-
-let validationCreation = "cachalot"; // Testez avec des chiffres pour voir la différence
-// email = new RegExp("^[a-z0-9._-]+@[a-z0-9._-]+\.[a-z0-9._-]+$");
-// let resultat = email.test(validationCreation);
-// console.log(resultat); // Affiche true.
-// password = new RegExp("^[a-z0-9._-]+@[a-z0-9._-]+\.[a-z0-9._-]+$");
-// resultat = password.test(validationCreation);
-// console.log(resultat); // Affiche true.
