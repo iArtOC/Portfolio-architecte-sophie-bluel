@@ -219,3 +219,70 @@ li a {
 	color: inherit;
     text-decoration: none;
 }
+
+#banner-edit-mode {
+	background-color: #000;
+	width: 100%;
+	height: 50px;
+	color: #FFF;
+	text-align: center;
+	font-family: Work Sans;
+	font-size: 16px;
+	font-weight: 400;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modify {
+	font-family: 'Work Sans';
+	font-size: 16px;
+	font-weight: 400;
+}
+
+section h2 > span a {
+	text-decoration: none;
+	cursor: pointer;
+	font-family: 'Work Sans';
+	font-size:10px;
+	letter-spacing: 0.1em;
+}
+
+section h2 span a {
+	text-decoration: none;
+	cursor: pointer;
+	font-family: 'Work Sans' ;
+	color: #000;
+	font-size: 16px;
+}
+
+.modal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+    left: 0;
+    top: 0;
+}
+
+.content-modal {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	background-color:rgba(255, 255, 255, 1);
+	border-radius: 10px;
+	width: 700px;
+	height: 600px;
+}
+
+.show {
+	display: block;
+}
+
+.hide {
+	display: none;
+}
