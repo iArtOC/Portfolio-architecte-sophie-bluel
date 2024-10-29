@@ -77,54 +77,135 @@ if (userIsConnected () === true) {
             }
         }
     }
-    // Sélectionner l'élément h2
-    var h2 = document.querySelector('#portfolio h2');
+    // Sélectionner la section portfolio
+    var portfolioEdit = document.getElementById('portfolio');
+
+    // Créer une nouvelle div
+    var portfolioDivAdd = document.createElement('div');
+    portfolioDivAdd.className = 'title-edition';
+
+    // Sélectionner le h2 existant
+    var titleH2 = portfolioEdit.querySelector('h2');
 
     // Créer un bouton
     var editBtn = document.createElement('span');
     editBtn.innerHTML=`
-    <a><i class="fa-solid fa-pen-to-square">Modifier</i></a>
+    <a><i class="fa-solid fa-pen-to-square"></i>modifier</a>
     `;
 
-    // Ajouter le bouton après l'élément h2
-    h2.insertAdjacentElement('beforeend', editBtn);
+    // Ajouter le h2 existant et le span à la nouvelle div
+    portfolioDivAdd.appendChild(titleH2);
+    portfolioDivAdd.appendChild(editBtn);
 
-    // Ajouter un gestionnaire d'événements (facultatif)
+    // Ajouter la nouvelle div à la section portfolio en début
+    portfolioEdit.prepend(portfolioDivAdd);
+
+    // Ajouter la div en début de section
+   titleH2.insertAdjacentElement('beforeend', editBtn);
+
+    // Première modal
+    var firstModaleHead = `
+                        <div class="exit-modal">
+                            <span id="closeFirstModal"><i class="fa-solid fa-xmark"></i></span>
+                        </div>`
+    var firstModalContent= `<h2 id="firstModal-title">Galerie photo</h2>
+
+                            <div id="tinyGallery" class="tinyGallery">
+                            </div>
+
+                            <div class="ajouter-supprimer">
+                                <button id="btnAddWork" type="submit">Ajouter une photo</button>
+                            </div>`
+    modal (firstModaleHead, firstModalContent, "firstModal");
+    var btnAddWork = document.getElementById ("btnAddWork");
+    if (btnAddWork) {
+        btnAddWork.addEventListener ('click', function () {
+            openExitModal ("firstModal", "cacher");
+            openExitModal ("secondModal", "afficher");
+        })
+    }
+
+    // Deuxième modal
+    var secondModaleHead = `
+                        <div class="nav-modal">
+                            <span id="previousBtn"><i class="fa-solid fa-arrow-left"></i></i></span>
+                            <span id="closeSecondModal"><i class="fa-solid fa-xmark"></i></span>
+                            </div>`
+    var secondModalContent= `<h2>Ajouter une photo</h2>
+
+                            <form>
+                            </form>
+
+                            <div class="ajouter-supprimer">
+                                <button id="createWork" type="submit">Valider</button>
+                            </div>`
+    modal (secondModaleHead, secondModalContent, "secondModal");
+    var btnBackModal = document.getElementById ("previousBtn");
+    if (btnBackModal) {
+        btnBackModal.addEventListener ('click', function () {
+            openExitModal ("firstModal", "afficher");
+            openExitModal ("secondModal", "cacher");
+        })
+    }
+
+    // Ajout d'un gestionnaire d'événements
     editBtn.addEventListener('click', function () {
-       modal ();
-       function modal (){
+        openExitModal ("firstModal", "afficher");
+        openExitModal ("secondModal", "cacher");
+    });
+
+    // Gestion des fermetures de modals
+    var closeFirstModal = document.getElementById("closeFirstModal");
+    if (closeFirstModal) {
+        closeFirstModal.addEventListener('click', function () {
+            openExitModal("firstModal", "cacher");
+        });
+    }
+
+    var closeSecondModal = document.getElementById("closeSecondModal");
+    if (closeSecondModal) {
+        closeSecondModal.addEventListener('click', function () {
+            openExitModal("secondModal", "cacher");
+        });
+    }
+    
+    // Fabrique de modal
+    function modal (head, content, id){
         // Création de la modal
         if (body) {
         var globalModal = document.createElement ("div");
+        globalModal.id=id
             if (globalModal) {
             globalModal.classList.add ("modal");
 
                 // Création du contenu de la modal
-                var firstModal = document.createElement ("div");
-                if (firstModal) {
-                    firstModal.classList.add ("content-modal");
-                    firstModal.innerHTML=`
+                var contentModal = document.createElement ("div");
+                if (contentModal) {
+                    contentModal.classList.add ("content-modal");
+                    contentModal.innerHTML=`
                     <div class="content-modal">
-                        <div class="exit-modal">
-                            <span><i class="fa-solid fa-xmark"></i></span>
-                        </div>
-
-                        <h2>Galerie photo</h2>
-
-                        <div id="tinyGalleryGrid" class="tinyGalleryGrid">
-                        </div>
-
-                        <div class="ajouter-supprimer">
-                            <button id="addWorks" type="submit">Ajouter une photo</button>
-                        </div>
+                        ${head}
+                        ${content}
                     </div>
                     `
-                    globalModal.append(firstModal);
+                    globalModal.append(contentModal);
                 }
 
             body.append(globalModal);
             }
         } 
-       }
-    });
+    }
+    // Affichage / désaffichage des modals
+    function openExitModal (id, action) {
+        var modal = document.getElementById (id);
+        if (modal) {
+            if (action === "afficher") {
+                modal.classList.add ("show")
+                modal.classList.remove ("hide")
+            } else {
+                modal.classList.add ("hide")
+                modal.classList.remove ("show")
+            }
+        }
+    }
 }
