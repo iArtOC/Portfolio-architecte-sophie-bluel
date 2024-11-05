@@ -1,5 +1,9 @@
+import { findAllCategories } from "../services/categorie-service.js";
+import { findAllWork } from "../services/galerie-service.js";
 import { connectLogin } from "../services/login-service.js";
 import { userIsConnected } from "../services/login-service.js";
+import { createWork } from "../services/work-service.js";
+import { deleteImage } from "../services/delete-service.js";
 
 const form = document.querySelector('form');
 
@@ -100,9 +104,6 @@ if (userIsConnected () === true) {
     // Ajouter la nouvelle div à la section portfolio en début
     portfolioEdit.prepend(portfolioDivAdd);
 
-    // Ajouter la div en début de section
-   titleH2.insertAdjacentElement('beforeend', editBtn);
-
     // Première modal
     var firstModaleHead = `
                         <div class="exit-modal">
@@ -110,7 +111,20 @@ if (userIsConnected () === true) {
                         </div>`
     var firstModalContent= `<h2 id="firstModal-title">Galerie photo</h2>
 
-                            <div id="tinyGallery" class="tinyGallery">
+                            <div id="tinyGallery" class="tiny-gallery">
+                            `
+                            var works = await findAllWork();
+                            if (works) {
+                                for (const work of works) {
+                                    firstModalContent+= `
+                                    <figure>
+                                        <img src="${work.imageUrl}">
+                                        <i class="fa-solid fa-trash-can" id="deleteBtn"></i>
+                                    </figure>
+                                    `;
+                                }
+                            }
+                            firstModalContent+=`
                             </div>
 
                             <div class="ajouter-supprimer">
@@ -125,6 +139,7 @@ if (userIsConnected () === true) {
         })
     }
 
+
     // Deuxième modal
     var secondModaleHead = `
                         <div class="nav-modal">
@@ -133,12 +148,25 @@ if (userIsConnected () === true) {
                             </div>`
     var secondModalContent= `<h2>Ajouter une photo</h2>
 
-                            <form>
-                            </form>
+                            <form id="createWork">
 
+                            <input type="file" id="inputFile" required>
+                            <input type="text" id="inputText" required>
+                            <select id="inputCategorie" required>
+                                <option></option>
+                            `
+                            var categories = await findAllCategories();
+                            if (categories) {
+                                for (const categorie of categories) {
+                                    secondModalContent+=`<option value="${categorie.id}">${categorie.name}</option>`
+                                }
+                            }
+                            secondModalContent+=`
+                            </select>
                             <div class="ajouter-supprimer">
                                 <button id="createWork" type="submit">Valider</button>
-                            </div>`
+                            </div>
+                            </form>`
     modal (secondModaleHead, secondModalContent, "secondModal");
     var btnBackModal = document.getElementById ("previousBtn");
     if (btnBackModal) {
@@ -147,6 +175,34 @@ if (userIsConnected () === true) {
             openExitModal ("secondModal", "cacher");
         })
     }
+
+    var formCreateWork = document.getElementById("createWork");
+    formCreateWork.addEventListener('submit', async function (event) {
+        event.preventDefault();
+    
+        var formInputFile = document.getElementById("inputFile");
+        var formInputText = document.getElementById("inputText");
+        var formInputCategorie = document.getElementById("inputCategorie");
+    
+        // Vérifie que les éléments existent
+        if (!formInputFile || !formInputText || !formInputCategorie) {
+            console.error("Un ou plusieurs éléments du formulaire sont manquants.");
+            return;
+        }
+    
+        var body = new FormData();
+        // Utilise files[0] pour récupérer le fichier
+        body.append("image", formInputFile.files[0]);
+        body.append("title", formInputText.value);
+        body.append("category", formInputCategorie.value);
+    
+        try {
+            var newWork = await createWork(body);
+            console.log(newWork);
+        } catch (error) {
+            console.log(error.message);
+        }
+    });
 
     // Ajout d'un gestionnaire d'événements
     editBtn.addEventListener('click', function () {
