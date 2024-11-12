@@ -11,23 +11,19 @@ const form = document.querySelector('form');
 form.addEventListener("submit", async function (event) {
     // On empêche le comportement par défaut
     event.preventDefault();
-    console.log("Il n’y a pas eu de rechargement de page");
 
     // On récupère les deux champs
     const inputEmail = document.getElementById("email");
     const email = inputEmail.value; // On récupère la valeur ici
-    console.log(email); // Affiche l'email
     //exemple de réasignation
     //let html = ""
     //html = "div"
 
     const inputPassword = document.getElementById("password"); // Corrigez le nom de l'élément
     const password = inputPassword.value; // On récupère la valeur ici
-    console.log(password); // Affiche le mot de passe
 
     try {
         const response = await connectLogin(email, password); // Passez les valeurs au login
-        console.log(response); // Gérer la réponse ici
         if (response.token) { // Supposons que la réponse contient un champ 'token'
             localStorage.setItem('token', response.token); // Stocke le token
             window.location.href = "./index.html";
@@ -46,8 +42,6 @@ if (userIsConnected() === true) {
     // Changer le texte en "logout" si le token est présent
     buttonLogin.textContent = 'logout';
     buttonLogin.style.fontWeight = 'bold';
-} else {
-    console.log("déconnecté");
 }
 
 // Ajout d'une action au button 'login' pour déconnecté
@@ -143,21 +137,22 @@ if (userIsConnected() === true) {
             }
         }
         tinyGallery.innerHTML = tinyGalleryContent;
+        // Ajout du bontton pour supprimer et actualisation des galleries
+        var deleteBtns = document.querySelectorAll(".fa-trash-can");
+        if (deleteBtns) {
+            for (const deleteBtn of deleteBtns) {
+                deleteBtn.addEventListener('click', async function () {
+                    var workId = deleteBtn.getAttribute("data-id");
+                    deleteImage(workId);
+                    await lookGallery();
+                    await lookTinyGallery();
+                });
+            }
+        }
     }
     await lookTinyGallery();
 
-    var deleteBtns = document.querySelectorAll(".fa-trash-can");
-    if (deleteBtns) {
-        for (const deleteBtn of deleteBtns) {
-            deleteBtn.addEventListener('click', async function () {
-                var workId = deleteBtn.getAttribute("data-id");
-                deleteImage(workId);
-                await lookGallery();
-                await lookTinyGallery();
-                console.log("supprimé");
-            });
-        }
-    }
+
 
     // Deuxième modal
     var secondModaleHead = `
@@ -172,7 +167,7 @@ if (userIsConnected() === true) {
                                     <div class="add-img">
                                         <i class="fa-regular fa-image" id="icone-image"></i>
                                         <label for="inputFile" class="btn-add-img"> + Ajouter photo</label>
-                                        <input type="file" id="inputFile" accept="image/jpg image/png" required>
+                                        <input type="file" id="inputFile" accept="image/jpg, image/png, image/jpeg" required>
 
                                         <span>jpg, png. 4mo max</span>
 
@@ -185,7 +180,7 @@ if (userIsConnected() === true) {
                                         <input type="text" id="inputText" required>
                                     </div>
                                     <div class="form-category">
-                                        <label for="categorie" id="inputCategorie">
+                                        <label for="inputCategorie">
                                             <p>Categorie</p>
                                         </label>
                                         <select id="inputCategorie" required>
@@ -236,9 +231,14 @@ if (userIsConnected() === true) {
 
         try {
             var newWork = await createWork(body);
-            console.log(newWork);
-        } catch (error) {
-            console.log(error.message);
+            if (newWork) {
+                openExitModal("firstModal", "afficher");
+                openExitModal("secondModal", "cacher");
+                await lookGallery();
+                await lookTinyGallery();
+            }
+        } catch {
+            alert("une erreur est survenue")
         }
     });
 
