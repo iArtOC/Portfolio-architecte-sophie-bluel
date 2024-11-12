@@ -4,6 +4,7 @@ import { connectLogin } from "../services/login-service.js";
 import { userIsConnected } from "../services/login-service.js";
 import { createWork } from "../services/work-service.js";
 import { deleteImage } from "../services/delete-service.js";
+import { lookGallery } from "./galerie-component.js";
 
 const form = document.querySelector('form');
 
@@ -31,11 +32,11 @@ form.addEventListener("submit", async function (event) {
             localStorage.setItem('token', response.token); // Stocke le token
             window.location.href = "./index.html";
         } else {
-            alert("une erreur est survenu")
+            alert("une erreur est survenu");
         }
     } catch (error) {
         console.error("Erreur lors de la connexion :", error);
-        alert("une erreur est survenu")
+        alert("une erreur est survenu");
     }
 });
 
@@ -44,14 +45,14 @@ var buttonLogin = document.getElementById("btnLogin");
 if (userIsConnected() === true) {
     // Changer le texte en "logout" si le token est présent
     buttonLogin.textContent = 'logout';
-    buttonLogin.style.fontWeight = 'bold'
+    buttonLogin.style.fontWeight = 'bold';
 } else {
-    console.log ("déconnecté")
+    console.log("déconnecté");
 }
 
 // Ajout d'une action au button 'login' pour déconnecté
 buttonLogin.addEventListener('click', function() {
-    disconnected ();
+    disconnected();
 });
 
 function disconnected() {
@@ -64,23 +65,24 @@ function disconnected() {
 }
 
 // Affichage en-tête 'mode édition'
-if (userIsConnected () === true) {
-    var body = document.querySelector("body")
+if (userIsConnected() === true) {
+    var body = document.querySelector("body");
     if (body) {
-        var bannerEdit = document.createElement("div")
+        var bannerEdit = document.createElement("div");
         if (bannerEdit) {
-            bannerEdit.id="banner-edit-mode"
-            var editMode = document.createElement("p")
+            bannerEdit.id = "banner-edit-mode";
+            var editMode = document.createElement("p");
             if (editMode) {
-                editMode.innerHTML=`
+                editMode.innerHTML = `
                 <i class="fa-solid fa-pen-to-square"></i>
                 Mode édition
-                ` 
-                bannerEdit.append(editMode)
-                body.prepend(bannerEdit)
+                `;
+                bannerEdit.append(editMode);
+                body.prepend(bannerEdit);
             }
         }
     }
+
     // Sélectionner la section portfolio
     var portfolioEdit = document.getElementById('portfolio');
 
@@ -93,7 +95,7 @@ if (userIsConnected () === true) {
 
     // Créer un bouton
     var editBtn = document.createElement('span');
-    editBtn.innerHTML=`
+    editBtn.innerHTML = `
     <a><i class="fa-solid fa-pen-to-square"></i>modifier</a>
     `;
 
@@ -108,94 +110,130 @@ if (userIsConnected () === true) {
     var firstModaleHead = `
                         <div class="exit-modal">
                             <span id="closeFirstModal"><i class="fa-solid fa-xmark"></i></span>
-                        </div>`
-    var firstModalContent= `<h2 id="firstModal-title">Galerie photo</h2>
+                        </div>`;
+    var firstModalContent = `<h2 id="firstModal-title">Galerie photo</h2>
 
                             <div id="tinyGallery" class="tiny-gallery">
-                            `
-                            var works = await findAllWork();
-                            if (works) {
-                                for (const work of works) {
-                                    firstModalContent+= `
-                                    <figure>
-                                        <img src="${work.imageUrl}">
-                                        <i class="fa-solid fa-trash-can" id="deleteBtn"></i>
-                                    </figure>
-                                    `;
-                                }
-                            }
-                            firstModalContent+=`
                             </div>
 
                             <div class="ajouter-supprimer">
                                 <button id="btnAddWork" type="submit">Ajouter une photo</button>
-                            </div>`
-    modal (firstModaleHead, firstModalContent, "firstModal");
-    var btnAddWork = document.getElementById ("btnAddWork");
+                            </div>`;
+    modal(firstModaleHead, firstModalContent, "firstModal");
+    var btnAddWork = document.getElementById("btnAddWork");
     if (btnAddWork) {
-        btnAddWork.addEventListener ('click', function () {
-            openExitModal ("firstModal", "cacher");
-            openExitModal ("secondModal", "afficher");
-        })
+        btnAddWork.addEventListener('click', function () {
+            openExitModal("firstModal", "cacher");
+            openExitModal("secondModal", "afficher");
+        });
     }
 
+    async function lookTinyGallery() {
+        var tinyGallery = document.getElementById("tinyGallery");
+        var tinyGalleryContent = "";
+        var works = await findAllWork();
+        if (works) {
+            for (const work of works) {
+                tinyGalleryContent += `
+                <figure>
+                    <img src="${work.imageUrl}">
+                    <i class="fa-solid fa-trash-can" data-id="${work.id}"></i>
+                </figure>
+                `;
+            }
+        }
+        tinyGallery.innerHTML = tinyGalleryContent;
+    }
+    await lookTinyGallery();
+
+    var deleteBtns = document.querySelectorAll(".fa-trash-can");
+    if (deleteBtns) {
+        for (const deleteBtn of deleteBtns) {
+            deleteBtn.addEventListener('click', async function () {
+                var workId = deleteBtn.getAttribute("data-id");
+                deleteImage(workId);
+                await lookGallery();
+                await lookTinyGallery();
+                console.log("supprimé");
+            });
+        }
+    }
 
     // Deuxième modal
     var secondModaleHead = `
                         <div class="nav-modal">
-                            <span id="previousBtn"><i class="fa-solid fa-arrow-left"></i></i></span>
+                            <span id="previousBtn"><i class="fa-solid fa-arrow-left"></i></span>
                             <span id="closeSecondModal"><i class="fa-solid fa-xmark"></i></span>
-                            </div>`
-    var secondModalContent= `<h2>Ajouter une photo</h2>
+                        </div>`;
+    var secondModalContent = `<h2>Ajout photo</h2>
 
-                            <form id="createWork">
+                            <form class="form-add" id="createWork">
+                                <div class="content-modal2">
+                                    <div class="add-img">
+                                        <i class="fa-regular fa-image" id="icone-image"></i>
+                                        <label for="inputFile" class="btn-add-img"> + Ajouter photo</label>
+                                        <input type="file" id="inputFile" accept="image/jpg image/png" required>
 
-                            <input type="file" id="inputFile" required>
-                            <input type="text" id="inputText" required>
-                            <select id="inputCategorie" required>
-                                <option></option>
-                            `
-                            var categories = await findAllCategories();
-                            if (categories) {
-                                for (const categorie of categories) {
-                                    secondModalContent+=`<option value="${categorie.id}">${categorie.name}</option>`
-                                }
+                                        <span>jpg, png. 4mo max</span>
+
+                                    </div>
+
+                                    <div class="form-title">
+                                        <label for="titre">
+                                            <p>Titre</p>
+                                        </label>
+                                        <input type="text" id="inputText" required>
+                                    </div>
+                                    <div class="form-category">
+                                        <label for="categorie" id="inputCategorie">
+                                            <p>Categorie</p>
+                                        </label>
+                                        <select id="inputCategorie" required>
+                                                    <option></option>
+                                                `;
+                        var categories = await findAllCategories();
+                        if (categories) {
+                            for (const categorie of categories) {
+                                secondModalContent += `<option value="${categorie.id}">${categorie.name}</option>`;
                             }
-                            secondModalContent+=`
-                            </select>
-                            <div class="ajouter-supprimer">
-                                <button id="createWork" type="submit">Valider</button>
-                            </div>
-                            </form>`
-    modal (secondModaleHead, secondModalContent, "secondModal");
-    var btnBackModal = document.getElementById ("previousBtn");
+                        }
+                        secondModalContent += `
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="createWork" type="submit">Ajouter</button>
+                                </div>
+                            </form>`;
+    modal(secondModaleHead, secondModalContent, "secondModal");
+    var btnBackModal = document.getElementById("previousBtn");
     if (btnBackModal) {
-        btnBackModal.addEventListener ('click', function () {
-            openExitModal ("firstModal", "afficher");
-            openExitModal ("secondModal", "cacher");
-        })
+        btnBackModal.addEventListener('click', function () {
+            openExitModal("firstModal", "afficher");
+            openExitModal("secondModal", "cacher");
+        });
     }
 
     var formCreateWork = document.getElementById("createWork");
     formCreateWork.addEventListener('submit', async function (event) {
         event.preventDefault();
-    
+
         var formInputFile = document.getElementById("inputFile");
         var formInputText = document.getElementById("inputText");
         var formInputCategorie = document.getElementById("inputCategorie");
-    
+
         // Vérifie que les éléments existent
         if (!formInputFile || !formInputText || !formInputCategorie) {
             console.error("Un ou plusieurs éléments du formulaire sont manquants.");
             return;
         }
-    
+
         var body = new FormData();
         // Utilise files[0] pour récupérer le fichier
         body.append("image", formInputFile.files[0]);
         body.append("title", formInputText.value);
         body.append("category", formInputCategorie.value);
-    
+
         try {
             var newWork = await createWork(body);
             console.log(newWork);
@@ -206,8 +244,8 @@ if (userIsConnected () === true) {
 
     // Ajout d'un gestionnaire d'événements
     editBtn.addEventListener('click', function () {
-        openExitModal ("firstModal", "afficher");
-        openExitModal ("secondModal", "cacher");
+        openExitModal("firstModal", "afficher");
+        openExitModal("secondModal", "cacher");
     });
 
     // Gestion des fermetures de modals
@@ -224,43 +262,44 @@ if (userIsConnected () === true) {
             openExitModal("secondModal", "cacher");
         });
     }
-    
+
     // Fabrique de modal
-    function modal (head, content, id){
+    function modal(head, content, id) {
         // Création de la modal
         if (body) {
-        var globalModal = document.createElement ("div");
-        globalModal.id=id
+            var globalModal = document.createElement("div");
+            globalModal.id = id;
             if (globalModal) {
-            globalModal.classList.add ("modal");
+                globalModal.classList.add("modal");
 
                 // Création du contenu de la modal
-                var contentModal = document.createElement ("div");
+                var contentModal = document.createElement("div");
                 if (contentModal) {
-                    contentModal.classList.add ("content-modal");
-                    contentModal.innerHTML=`
+                    contentModal.classList.add("content-modal");
+                    contentModal.innerHTML = `
                     <div class="content-modal">
                         ${head}
                         ${content}
                     </div>
-                    `
+                    `;
                     globalModal.append(contentModal);
                 }
 
-            body.append(globalModal);
+                body.append(globalModal);
             }
-        } 
+        }
     }
+
     // Affichage / désaffichage des modals
-    function openExitModal (id, action) {
-        var modal = document.getElementById (id);
+    function openExitModal(id, action) {
+        var modal = document.getElementById(id);
         if (modal) {
             if (action === "afficher") {
-                modal.classList.add ("show")
-                modal.classList.remove ("hide")
+                modal.classList.add("show");
+                modal.classList.remove("hide");
             } else {
-                modal.classList.add ("hide")
-                modal.classList.remove ("show")
+                modal.classList.add("hide");
+                modal.classList.remove("show");
             }
         }
     }

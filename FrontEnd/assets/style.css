@@ -258,6 +258,8 @@ section span a {
 	font-size: 16px;
 }
 
+/*** modal ***/
+
 .modal {
 	display: none;
 	align-items: center;
@@ -282,11 +284,11 @@ section span a {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
+	overflow: auto;
 	background-color:rgba(255, 255, 255, 1);
 	border-radius: 10px;
 	width: 630px;
-	height: 688px;
 }
 
 .content-modal i {
@@ -328,8 +330,8 @@ section span a {
 	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 	grid-column-gap: 10px;
 	grid-row-gap: 20px;
-	padding-bottom: 25px;
-	border-bottom: solid 1px #B3B3B3;
+	padding-bottom: 50px;
+	border-bottom: solid 1px gray;
 }
 
 .tiny-gallery img {
@@ -355,3 +357,99 @@ section span a {
     border-radius: 10%;
     padding: 5px; 
 }
+
+/** Modale2 **/
+
+.form-add {
+	width: 420px;
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+}
+
+.content-modal2 {
+	padding-bottom: 25px;
+	border-bottom: solid 1px gray;
+}
+
+.add-img {
+	width: 420px;
+	height: 169px;
+	padding: 10px;
+	border-radius: 3px;
+	background-color:#E8F1F6 ;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+}
+.add-img input {
+	display: none;
+}
+/* .fa-image::before{
+	display: flex;
+	justify-self: center;
+	align-self: center;
+} */
+
+.fa-image {
+    /* display: flex; */
+    justify-content: center;
+    align-content: center;
+    /* width: 76px; */
+    height: 76px;
+    /* margin: 5px; */
+    /* padding-left: 3px; */
+    /* padding-right: 3px; */
+    /* background-color: #E8F1F6; */
+    color: #CBD6DC;
+    font-size: 60px;
+}
+
+.btn-add-img {
+    cursor: pointer;
+    height: 31px;
+    width: 173px;
+    padding-top: 15px;
+    border: none;
+    border-radius: 50px;
+    background: #CBD6DC;
+    color: rgba(48, 102, 133, 1);
+    text-align: center;
+	
+}
+
+.content-modal form #createWork {
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+	width: 176px;
+}
+
+.form-title, .form-category {
+	margin-bottom: 20px;
+}
+
+.content-modal form p {
+	font-weight: bold;
+	margin: 10px 0px;
+}
+
+.content-modal input {
+	width: 100%;
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+.content-modal .form-category select {
+	width: 100%;
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
