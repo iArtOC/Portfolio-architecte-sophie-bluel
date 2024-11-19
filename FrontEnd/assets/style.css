@@ -387,22 +387,11 @@ section span a {
 .add-img input {
 	display: none;
 }
-/* .fa-image::before{
-	display: flex;
-	justify-self: center;
-	align-self: center;
-} */
 
 .fa-image {
-    /* display: flex; */
     justify-content: center;
     align-content: center;
-    /* width: 76px; */
     height: 76px;
-    /* margin: 5px; */
-    /* padding-left: 3px; */
-    /* padding-right: 3px; */
-    /* background-color: #E8F1F6; */
     color: #CBD6DC;
     font-size: 60px;
 }

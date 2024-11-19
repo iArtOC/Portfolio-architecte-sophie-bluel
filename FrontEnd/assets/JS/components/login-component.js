@@ -1,3 +1,4 @@
+// Importation des services
 import { findAllCategories } from "../services/categorie-service.js";
 import { findAllWork } from "../services/galerie-service.js";
 import { connectLogin } from "../services/login-service.js";
@@ -6,20 +7,17 @@ import { createWork } from "../services/work-service.js";
 import { deleteImage } from "../services/delete-service.js";
 import { lookGallery } from "./galerie-component.js";
 
+// Gestion de la soumission du formulaire de connexion
 const form = document.querySelector('form');
 
 form.addEventListener("submit", async function (event) {
-    // On empêche le comportement par défaut
     event.preventDefault();
 
     // On récupère les deux champs
     const inputEmail = document.getElementById("email");
     const email = inputEmail.value; // On récupère la valeur ici
-    //exemple de réasignation
-    //let html = ""
-    //html = "div"
 
-    const inputPassword = document.getElementById("password"); // Corrigez le nom de l'élément
+    const inputPassword = document.getElementById("password"); 
     const password = inputPassword.value; // On récupère la valeur ici
 
     try {
@@ -36,7 +34,7 @@ form.addEventListener("submit", async function (event) {
     }
 });
 
-// Récupérer le button login et le modifier si utilisateur connecté
+// Modification du bouton de connexion si l'utilisateur est connecté
 var buttonLogin = document.getElementById("btnLogin");
 if (userIsConnected() === true) {
     // Changer le texte en "logout" si le token est présent
@@ -44,10 +42,12 @@ if (userIsConnected() === true) {
     buttonLogin.style.fontWeight = 'bold';
 }
 
-// Ajout d'une action au button 'login' pour déconnecté
-buttonLogin.addEventListener('click', function() {
-    disconnected();
-});
+// Déconnexion de l'utilisateur
+if (buttonLogin) {
+    buttonLogin.addEventListener('click', function() {
+        disconnected();
+    });
+}
 
 function disconnected() {
     if (userIsConnected === false) {
@@ -58,7 +58,7 @@ function disconnected() {
     }
 }
 
-// Affichage en-tête 'mode édition'
+// Affichage d'une bannière "Mode édition" si l'utilisateur est connecté
 if (userIsConnected() === true) {
     var body = document.querySelector("body");
     if (body) {
@@ -77,6 +77,7 @@ if (userIsConnected() === true) {
         }
     }
 
+    // Modification de la section portfolio
     // Sélectionner la section portfolio
     var portfolioEdit = document.getElementById('portfolio');
 
@@ -137,7 +138,7 @@ if (userIsConnected() === true) {
             }
         }
         tinyGallery.innerHTML = tinyGalleryContent;
-        // Ajout du bontton pour supprimer et actualisation des galleries
+        // Ajout du boutton pour supprimer et actualiser les galleries
         var deleteBtns = document.querySelectorAll(".fa-trash-can");
         if (deleteBtns) {
             for (const deleteBtn of deleteBtns) {
@@ -167,23 +168,23 @@ if (userIsConnected() === true) {
                                     <div class="add-img">
                                         <i class="fa-regular fa-image" id="icone-image"></i>
                                         <label for="inputFile" class="btn-add-img"> + Ajouter photo</label>
-                                        <input type="file" id="inputFile" accept="image/jpg, image/png, image/jpeg" required>
+                                        <input type="file" id="inputFile" accept="image/jpg, image/png, image/jpeg">
 
                                         <span>jpg, png. 4mo max</span>
 
                                     </div>
 
                                     <div class="form-title">
-                                        <label for="titre">
+                                        <label for="inputText">
                                             <p>Titre</p>
                                         </label>
-                                        <input type="text" id="inputText" required>
+                                        <input type="text" id="inputText">
                                     </div>
                                     <div class="form-category">
                                         <label for="inputCategorie">
                                             <p>Categorie</p>
                                         </label>
-                                        <select id="inputCategorie" required>
+                                        <select id="inputCategorie">
                                                     <option></option>
                                                 `;
                         var categories = await findAllCategories();
@@ -217,9 +218,9 @@ if (userIsConnected() === true) {
         var formInputText = document.getElementById("inputText");
         var formInputCategorie = document.getElementById("inputCategorie");
 
-        // Vérifie que les éléments existent
-        if (!formInputFile || !formInputText || !formInputCategorie) {
-            console.error("Un ou plusieurs éléments du formulaire sont manquants.");
+        // Vérifier que les éléments existent
+        if (!formInputFile.value || !formInputText.value || !formInputCategorie.value) {
+            alert ("Un ou plusieurs éléments du formulaire sont manquants.");
             return;
         }
 
@@ -236,9 +237,11 @@ if (userIsConnected() === true) {
                 openExitModal("secondModal", "cacher");
                 await lookGallery();
                 await lookTinyGallery();
+            } else {
+                alert("Une erreur est survenue.");
             }
-        } catch {
-            alert("une erreur est survenue")
+        } catch (error) {
+            alert("Une erreur est survenue.");
         }
     });
 
@@ -290,7 +293,7 @@ if (userIsConnected() === true) {
         }
     }
 
-    // Affichage / désaffichage des modals
+    // Gestion des modals (affichage/fermeture)
     function openExitModal(id, action) {
         var modal = document.getElementById(id);
         if (modal) {
