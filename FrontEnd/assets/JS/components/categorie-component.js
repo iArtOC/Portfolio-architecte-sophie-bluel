@@ -1,3 +1,4 @@
+// Importation des services
 import { findAllCategories } from "../services/categorie-service.js";
 import { userIsConnected } from "../services/login-service.js";
 import { lookGallery } from "./galerie-component.js";

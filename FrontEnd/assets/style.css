@@ -293,6 +293,7 @@ section span a {
 
 .content-modal i {
 	cursor: pointer;
+	margin-top: 10px;
 }
 
 .exit-modal {
@@ -313,7 +314,7 @@ section span a {
 
 .content-modal h2 {
 	font-family: 'Work Sans';
-	margin: 20px;
+	margin: 25px;
 }
 
 .show {
@@ -336,7 +337,6 @@ section span a {
 
 .tiny-gallery img {
 	width: 100%;
-
 }
 
 .tiny-gallery figure {
@@ -373,19 +373,38 @@ section span a {
 	border-bottom: solid 1px gray;
 }
 
-.add-img {
+.file-content {
 	width: 420px;
 	height: 169px;
-	padding: 10px;
 	border-radius: 3px;
 	background-color:#E8F1F6 ;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
 }
+
+.add-img {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#imagePreview {
+	display: none;
+}
+
+#previewImage  {
+	max-width: 100%;
+	max-height: 169px;
+}
+
+
 .add-img input {
 	display: none;
+}
+
+.add-img span {
+	margin: 10px 0;
 }
 
 .fa-image {
@@ -398,15 +417,14 @@ section span a {
 
 .btn-add-img {
     cursor: pointer;
-    height: 31px;
-    width: 173px;
+    height: 30px;
+    width: 170px;
     padding-top: 15px;
     border: none;
     border-radius: 50px;
     background: #CBD6DC;
     color: rgba(48, 102, 133, 1);
     text-align: center;
-	
 }
 
 .content-modal form #createWork {
@@ -423,7 +441,7 @@ section span a {
 
 .content-modal form p {
 	font-weight: bold;
-	margin: 10px 0px;
+	margin: 15px 0px;
 }
 
 .content-modal input {

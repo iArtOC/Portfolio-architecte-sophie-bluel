@@ -1,3 +1,4 @@
+// Importation du service
 import { findAllWork } from "../services/galerie-service.js";
 
 export async function lookGallery(categorieId = null) {
@@ -21,7 +22,7 @@ export async function lookGallery(categorieId = null) {
                     <img src="${work.imageUrl}" alt="${work.title}">
                     <figcaption>${work.title}</figcaption>
                 </figure>
-                `;
+                `;// String Interpolation
             }    
         } 
         galleryGrid.innerHTML = html;

@@ -7,6 +7,7 @@ import { createWork } from "../services/work-service.js";
 import { deleteImage } from "../services/delete-service.js";
 import { lookGallery } from "./galerie-component.js";
 
+// *************** CONNEXION ***************
 // Gestion de la soumission du formulaire de connexion
 const form = document.querySelector('form');
 
@@ -42,6 +43,8 @@ if (userIsConnected() === true) {
     buttonLogin.style.fontWeight = 'bold';
 }
 
+
+// *************** DECONNEXION ***************
 // Déconnexion de l'utilisateur
 if (buttonLogin) {
     buttonLogin.addEventListener('click', function() {
@@ -58,6 +61,8 @@ function disconnected() {
     }
 }
 
+
+// *************** SI - CONNEXION ***************
 // Affichage d'une bannière "Mode édition" si l'utilisateur est connecté
 if (userIsConnected() === true) {
     var body = document.querySelector("body");
@@ -144,7 +149,7 @@ if (userIsConnected() === true) {
             for (const deleteBtn of deleteBtns) {
                 deleteBtn.addEventListener('click', async function () {
                     var workId = deleteBtn.getAttribute("data-id");
-                    deleteImage(workId);
+                    await deleteImage(workId);
                     await lookGallery();
                     await lookTinyGallery();
                 });
@@ -153,55 +158,60 @@ if (userIsConnected() === true) {
     }
     await lookTinyGallery();
 
-
-
     // Deuxième modal
     var secondModaleHead = `
-                        <div class="nav-modal">
-                            <span id="previousBtn"><i class="fa-solid fa-arrow-left"></i></span>
-                            <span id="closeSecondModal"><i class="fa-solid fa-xmark"></i></span>
-                        </div>`;
+        <div class="nav-modal">
+            <span id="previousBtn"><i class="fa-solid fa-arrow-left"></i></span>
+            <span id="closeSecondModal"><i class="fa-solid fa-xmark"></i></span>
+        </div>`;
+
     var secondModalContent = `<h2>Ajout photo</h2>
+        <form class="form-add" id="createWork">
+            <div class="content-modal2">
+                <div class="file-content">
+                    <div class="add-img">
+                        <i class="fa-regular fa-image" id="icone-image"></i>
+                        <label for="inputFile" class="btn-add-img" id="labelAddImage">+ Ajouter photo</label>
+                        <input type="file" id="inputFile" accept="image/jpg, image/png, image/jpeg">
 
-                            <form class="form-add" id="createWork">
-                                <div class="content-modal2">
-                                    <div class="add-img">
-                                        <i class="fa-regular fa-image" id="icone-image"></i>
-                                        <label for="inputFile" class="btn-add-img"> + Ajouter photo</label>
-                                        <input type="file" id="inputFile" accept="image/jpg, image/png, image/jpeg">
+                        <span id="fileInfo">jpg, png. 4mo max</span>
+                    </div>
 
-                                        <span>jpg, png. 4mo max</span>
+                    <div id="imagePreview">
+                        <img id="previewImage" src="" alt="Aperçu de l'image">
+                    </div>
+                </div>
 
-                                    </div>
+                <div class="form-title">
+                    <label for="inputText">
+                        <p>Titre</p>
+                    </label>
+                    <input type="text" id="inputText">
+                </div>
+                <div class="form-category">
+                    <label for="inputCategorie">
+                        <p>Categorie</p>
+                    </label>
+                    <select id="inputCategorie">
+                        <option></option>
+                    `;
+    var categories = await findAllCategories();
+    if (categories) {
+        for (const categorie of categories) {
+            secondModalContent += `<option value="${categorie.id}">${categorie.name}</option>`;
+        }
+    }
+    secondModalContent += `
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button id="createWork" type="submit">Ajouter</button>
+            </div>
+        </form>`;
 
-                                    <div class="form-title">
-                                        <label for="inputText">
-                                            <p>Titre</p>
-                                        </label>
-                                        <input type="text" id="inputText">
-                                    </div>
-                                    <div class="form-category">
-                                        <label for="inputCategorie">
-                                            <p>Categorie</p>
-                                        </label>
-                                        <select id="inputCategorie">
-                                                    <option></option>
-                                                `;
-                        var categories = await findAllCategories();
-                        if (categories) {
-                            for (const categorie of categories) {
-                                secondModalContent += `<option value="${categorie.id}">${categorie.name}</option>`;
-                            }
-                        }
-                        secondModalContent += `
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button id="createWork" type="submit">Ajouter</button>
-                                </div>
-                            </form>`;
     modal(secondModaleHead, secondModalContent, "secondModal");
+
     var btnBackModal = document.getElementById("previousBtn");
     if (btnBackModal) {
         btnBackModal.addEventListener('click', function () {
@@ -209,6 +219,35 @@ if (userIsConnected() === true) {
             openExitModal("secondModal", "cacher");
         });
     }
+
+    // Aperçu de l'image sélectionnée et remplacer div add-img
+    var inputFile = document.getElementById("inputFile");
+    var imagePreview = document.getElementById("imagePreview");
+    var previewImage = document.getElementById("previewImage");
+    var iconImage = document.getElementById("icone-image");
+    var labelAddImage = document.getElementById("labelAddImage");
+    var fileInfo = document.getElementById("fileInfo");
+
+    inputFile.addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+            // Créer un objet URL pour afficher l'image
+            var objectURL = URL.createObjectURL(file);
+            previewImage.src = objectURL;
+            // Masquer div add-img
+            imagePreview.style.display = "block";           
+            iconImage.style.display = "none";
+            labelAddImage.style.display = "none";
+            fileInfo.style.display = "none";
+
+        } else {
+            // Si aucun fichier n'est sélectionné, réafficher div add-img
+            imagePreview.style.display = "none";
+            iconImage.style.display = "block";
+            labelAddImage.style.display = "block";
+            fileInfo.style.display = "inline";
+        }
+    });
 
     var formCreateWork = document.getElementById("createWork");
     formCreateWork.addEventListener('submit', async function (event) {
@@ -218,9 +257,9 @@ if (userIsConnected() === true) {
         var formInputText = document.getElementById("inputText");
         var formInputCategorie = document.getElementById("inputCategorie");
 
-        // Vérifier que les éléments existent
+        // Vérifie si les éléments existent
         if (!formInputFile.value || !formInputText.value || !formInputCategorie.value) {
-            alert ("Un ou plusieurs éléments du formulaire sont manquants.");
+            alert("Un ou plusieurs éléments du formulaire sont manquants.");
             return;
         }
 
@@ -245,7 +284,8 @@ if (userIsConnected() === true) {
         }
     });
 
-    // Ajout d'un gestionnaire d'événements
+    // *************** MODALS ***************
+    // Ajout afficher ou fermer modal
     editBtn.addEventListener('click', function () {
         openExitModal("firstModal", "afficher");
         openExitModal("secondModal", "cacher");
@@ -266,7 +306,7 @@ if (userIsConnected() === true) {
         });
     }
 
-    // Fabrique de modal
+    // Fabrique de modals
     function modal(head, content, id) {
         // Création de la modal
         if (body) {
